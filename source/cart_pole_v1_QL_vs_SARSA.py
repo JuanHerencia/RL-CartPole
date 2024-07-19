@@ -25,7 +25,7 @@ state_size = env.observation_space.shape[0]
 action_size = env.action_space.n
 
 # Definir el rango de bins para la discretización
-num_bins = 10
+num_bins = 20
 bins = [
     np.linspace(-4.8, 4.8, num_bins),  # cart position
     np.linspace(-4, 4, num_bins),      # cart velocity
@@ -38,13 +38,13 @@ q_table_q_learning = np.zeros([num_bins] * state_size + [action_size])
 q_table_sarsa = np.zeros([num_bins] * state_size + [action_size])
 
 # Hiperparámetros
-learning_rate = 0.1
+learning_rate = 0.8
 discount_rate = 0.99
 epsilon = 1.0
 epsilon_min = 0.01
 epsilon_decay = 0.995
-episodes = 1000
-max_steps = 500
+episodes = 10000
+max_steps = 5000
 
 # Función para discretizar el espacio de estados
 def discretize_state(state):
@@ -64,6 +64,8 @@ def epsilon_greedy_action(q_table, state, epsilon):
 rewards_q_learning = []
 rewards_sarsa = []
 
+print(f'Alpha = {learning_rate}\nGamma = {discount_rate}\nEpsilon = {epsilon}\nEpsilon Decay = {epsilon_decay}\nEpisodios = {episodes}\nPasos x episodio = {max_steps}')
+print('Q-Learning')
 inicio = time.time()
 # Implementación de Q-Learning
 for episode in range(episodes):
@@ -92,8 +94,11 @@ for episode in range(episodes):
     
     rewards_q_learning.append(total_reward)
     
-    if episode % 100 == 0:
-        print(f'[Q-Learning] Episode: {episode}, Total Reward: {total_reward}, Epsilon: {epsilon}')
+    if total_reward >= 500:
+       print(f'Episodio {episode}, Recompensa total: {total_reward}')
+    
+    #if episode % 100 == 0:
+    #    print(f'[Q-Learning] Episode: {episode}, Total Reward: {total_reward}, Epsilon: {epsilon}')
 
 fin = time.time()
 tiempo_ql = fin - inicio
@@ -101,6 +106,7 @@ tiempo_ql = fin - inicio
 # Reset epsilon for SARSA
 epsilon = 1.0
 
+print('SARSA')
 inicio = time.time()
 # Implementación de SARSA
 for episode in range(episodes):
@@ -130,8 +136,11 @@ for episode in range(episodes):
     
     rewards_sarsa.append(total_reward)
     
-    if episode % 100 == 0:
-        print(f'[SARSA] Episode: {episode}, Total Reward: {total_reward}, Epsilon: {epsilon}')
+    if total_reward >= 500:
+       print(f'Episodio {episode}, Recompensa total: {total_reward}')
+    
+    #if episode % 100 == 0:
+    #    print(f'[SARSA] Episode: {episode}, Total Reward: {total_reward}, Epsilon: {epsilon}')
 fin = time.time()        
 tiempo_sarsa = fin - inicio
 
@@ -140,11 +149,12 @@ print(f'Tiempo SARSA      = {tiempo_sarsa} segundos')
 
 # Gráficos de las recompensas por episodio para Q-Learning y SARSA
 plt.figure(figsize=(18, 8))
-
+# Mostrar al 75% de altura de la máx recompensa
 plt.subplot(2, 1, 1)
+plt.text(8000,0.70*max(max(rewards_sarsa),max(rewards_q_learning)), f'Alpha = {learning_rate}\nGamma = {discount_rate}\nEpsilon = {epsilon}\nEpsilon Decay = {epsilon_decay}\nEpisodios = {episodes}\nPasos x episodio = {max_steps}')
 plt.plot(rewards_q_learning, label='Q-Learning')
 plt.xlabel('Episodios')
-plt.ylabel('Recompensa Total')
+plt.ylabel('Recompensa')
 plt.title('Recompensa Total por episodio (Q-Learning)')
 plt.legend()
 plt.grid(True)
@@ -152,7 +162,7 @@ plt.grid(True)
 plt.subplot(2, 1, 2)
 plt.plot(rewards_sarsa, label='SARSA', color = 'b')
 plt.xlabel('Episodios')
-plt.ylabel('Recompensa Total')
+plt.ylabel('Recompensa')
 plt.title('Recompensa Total por episodio (SARSA)')
 plt.legend()
 plt.grid(True)
@@ -185,69 +195,6 @@ for _ in range(max_steps):
         action = 1 - action  # Cambiar acción (0 -> 1 o 1 -> 0)
     
     prev_angle = next_state[2]
-
-# Simulación con el agente entrenado para SARSA
-initial_state = [0, 0, np.pi/4, 0]
-env.env.state = initial_state
-state = discretize_state(env.env.state)
-
-positions_sarsa = []
-angles_sarsa = []
-prev_angle = initial_state[2]
-
-for _ in range(max_steps):
-    action = np.argmax(q_table_sarsa[state])
-    next_state, reward, done, _, _ = env.step(action)
-    state = discretize_state(next_state)
-    
-    positions_sarsa.append(next_state[0])
-    angles_sarsa.append(next_state[2])
-    
-    if abs(next_state[2]) < np.pi / 20 or abs(next_state[2]) > np.pi / 2:
-        break
-    
-    # Cambio de acción si el ángulo está aumentando en valor absoluto
-    if abs(next_state[2]) > abs(prev_angle):
-        action = 1 - action  # Cambiar acción (0 -> 1 o 1 -> 0)
-    
-    prev_angle = next_state[2]
-
-# Gráficos de resultados
-time_q_learning = np.linspace(0, len(positions_q_learning)/50, len(positions_q_learning))  # 50 steps por segundo
-time_sarsa = np.linspace(0, len(positions_sarsa)/50, len(positions_sarsa))  # 50 steps por segundo
-
-plt.figure(figsize=(12, 12))
-
-plt.subplot(2, 2, 1)
-plt.plot(time_q_learning, positions_q_learning, label='Q-Learning')
-plt.xlabel('Tiempo (s)')
-plt.ylabel('Posición del carro (m)')
-plt.title('Posición del carro vs Tiempo (Q-Learning)')
-plt.legend()
-
-plt.subplot(2, 2, 2)
-plt.plot(time_q_learning, angles_q_learning, label='Q-Learning')
-plt.xlabel('Tiempo (s)')
-plt.ylabel('Ángulo del poste (rad)')
-plt.title('Ángulo del poste vs Tiempo (Q-Learning)')
-plt.legend()
-
-plt.subplot(2, 2, 3)
-plt.plot(time_sarsa, positions_sarsa, label='SARSA')
-plt.xlabel('Tiempo (s)')
-plt.ylabel('Posición del carro (m)')
-plt.title('Posición del carro vs Tiempo (SARSA)')
-plt.legend()
-
-plt.subplot(2, 2, 4)
-plt.plot(time_sarsa, angles_sarsa, label='SARSA')
-plt.xlabel('Tiempo (s)')
-plt.ylabel('Ángulo del poste (rad)')
-plt.title('Ángulo del poste vs Tiempo (SARSA)')
-plt.legend()
-
-plt.tight_layout()
-plt.show()
 
 # Sumarizar las recompensas
 total_reward_q_learning = sum(rewards_q_learning)

@@ -19,7 +19,7 @@ l = 0.5       # longitud del poste (desde el pivote hasta el centro de masa)
 g = 9.81      # aceleración debido a la gravedad
 
 # Fuerza inicial para comenzar el equilibrio
-F_initial = 12.76 # 12.76 Una centécima menos pierde el equilibrio
+F_initial = 12.75 # 12.76 Una centécima menos pierde el equilibrio
 
 # Estado inicial: [posición del carro, velocidad del carro, ángulo del poste, velocidad angular del poste]
 initial_state = [0, 0, np.pi/4, 0]
