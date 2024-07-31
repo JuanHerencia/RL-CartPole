@@ -1,0 +1,15 @@
+Resultados para Q-Learning
+Alpha = 0.1
+Gamma = 0.99
+Epsilon = 1.0
+Epsilon Decay = 0.995  
+Episodios = 10000      
+Pasos x episodio = 5000
+Problema resuelto en 8491 episodios con una duración media de 500.00
+Resultados para Q-Learning   
+Alpha = 0.1
+Gamma = 0.99
+Epsilon = 0.00998645168764533
+Epsilon Decay = 0.995
+Episodios = 10000
+Pasos x episodio = 5000

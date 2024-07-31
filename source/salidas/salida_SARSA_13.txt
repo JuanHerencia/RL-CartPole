@@ -1,0 +1,16 @@
+Resultados para SARSA
+Alpha = 0.1
+Gamma = 0.99
+Epsilon = 1.0
+Epsilon Decay = 0.995   
+Episodios = 100000      
+Pasos x episodio = 10000
+Problema resuelto en 39706 episodios con una duración media de 500.00
+Resultados para SARSA
+Alpha = 0.1
+Gamma = 0.99
+Epsilon = 0.00998645168764533
+Epsilon Decay = 0.995
+Episodios = 100000
+Pasos x episodio = 10000
+Tiempo realizado : 307.3265233039856 segundos

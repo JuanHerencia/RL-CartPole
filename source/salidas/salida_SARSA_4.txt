@@ -1,0 +1,15 @@
+Resultados para SARSA
+Alpha = 0.1
+Gamma = 0.99
+Epsilon = 1.0
+Epsilon Decay = 0.995  
+Episodios = 20000      
+Pasos x episodio = 5000
+Resultados para SARSA
+Alpha = 0.1
+Gamma = 0.99
+Epsilon = 0.00998645168764533
+Epsilon Decay = 0.995
+Episodios = 20000
+Pasos x episodio = 5000
+Tiempo realizado : 167.97480726242065 segundos
